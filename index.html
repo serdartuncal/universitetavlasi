@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0045)file:///C:/Users/serda/Downloads/index_6.html -->
+<!-- saved from url=(0045)file:///C:/Users/serda/Downloads/index_8.html -->
 <html lang="tr"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
@@ -98,7 +98,7 @@ svg{display:block;width:100%;height:auto;touch-action:manipulation}
 <div class="wrap" id="app">
     <h1>Oda 38KXJ2</h1>
     <div class="card">
-      <div class="link">file:///C:/Users/serda/Downloads/index_6.html?oda=38KXJ2</div>
+      <div class="link">file:///C:/Users/serda/Downloads/index_8.html?oda=38KXJ2</div>
       <div class="actions"><button onclick="shareLink()">Linki paylaş</button></div>
       <p class="muted tiny">Arkadaşlarınız bu linki telefonlarında açıp adlarını yazsın; sonra bir koltuğa dokunsun.</p>
     </div>
@@ -111,7 +111,7 @@ svg{display:block;width:100%;height:auto;touch-action:manipulation}
     </div>
     
     <button onclick="act({type:&#39;start&#39;})" disabled="">Oyunu başlat</button><p class="muted tiny" style="text-align:center">Siz ev sahibisiniz: oyun boyunca bu sayfayı açık tutun.</p>
-    <div class="conn bad" id="conn">Sunucu bağlantısı koptu, yeniden bağlanılıyor…</div>
+    <div class="conn bad" id="conn">Ağ hatası, yeniden deneniyor…</div>
     <p style="text-align:center;margin-top:14px"><button class="secondary small" onclick="leaveRoom()">Odadan çık</button></p></div>
 <div class="toast" id="toast"></div>
 
@@ -405,10 +405,14 @@ function startHost(code,restore){
   else { S=newState(code); S.players[ME.pid]={name:ME.name,online:true}; }
   ls.set('utavla:last',{role:'host',code,me:ME});
   render();
+  let gen=0, watchdog=null;
   const open=()=>{
+    const my=++gen; if(watchdog){ clearTimeout(watchdog); watchdog=null; }
     setStatus('Oda açılıyor…');
     const peer=new Peer(hostPeerId(code),PEER_OPTS); NET.peer=peer;
-    peer.on('open',()=>{ setStatus('Oda açık • '+code); saveHost(); });
+    const dead=()=>my!==gen||peer.destroyed;
+    const reopen=(delay)=>{ if(dead()) return; gen++; try{peer.destroy();}catch(x){} setTimeout(open,delay); };
+    peer.on('open',()=>{ if(dead()) return; if(watchdog){ clearTimeout(watchdog); watchdog=null; } setStatus('Oda açık • '+code); saveHost(); });
     peer.on('connection',conn=>{
       conn.on('open',()=>{ NET.conns.set(conn.peer,conn); conn.send({type:'state',state:S}); });
       conn.on('data',m=>{
@@ -420,14 +424,22 @@ function startHost(code,restore){
       const bye=()=>{ NET.conns.delete(conn.peer); if(conn.pid&&S.players[conn.pid]){ const still=[...NET.conns.values()].some(c=>c.pid===conn.pid&&c.open); if(!still){ S.players[conn.pid].online=false; S.v++; broadcast(); render(); } } };
       conn.on('close',bye); conn.on('error',bye);
     });
-    peer.on('disconnected',()=>{ setStatus('Sunucu bağlantısı koptu, yeniden bağlanılıyor…',true); setTimeout(()=>{ try{peer.reconnect();}catch(e){} },1500); });
+    peer.on('disconnected',()=>{
+      if(dead()) return;
+      const live=[...NET.conns.values()].filter(c=>c.open).length;
+      setStatus(live?`Oda açık • ${code} (sunucuya yeniden bağlanılıyor, oyun devam eder)`:'Sunucu bağlantısı koptu, yeniden bağlanılıyor…',!live);
+      setTimeout(()=>{ if(dead()) return; try{ peer.reconnect(); }catch(e){ reopen(500); } },1000);
+      if(!watchdog) watchdog=setTimeout(()=>{ watchdog=null; if(!dead()&&!peer.open) reopen(300); },8000);
+    });
     peer.on('error',e=>{
-      if(e.type==='unavailable-id'){ setStatus('Oda kimliği hâlâ meşgul, yeniden deneniyor…',true); setTimeout(()=>{ try{peer.destroy();}catch(x){} open(); },4000); }
-      else if(e.type==='network'||e.type==='server-error'||e.type==='socket-error'||e.type==='socket-closed'){ setStatus('Ağ hatası, yeniden deneniyor…',true); setTimeout(()=>{ try{peer.destroy();}catch(x){} open(); },4000); }
+      if(dead()) return;
+      if(e.type==='unavailable-id'){ setStatus('Oda kimliği başka bir sekmede/cihazda açık, yeniden deneniyor…',true); reopen(5000); }
+      else if(['network','server-error','socket-error','socket-closed','webrtc'].includes(e.type)){ setStatus('Ağ hatası, yeniden deneniyor…',true); if(!peer.open) reopen(4000); }
       else setStatus('Hata: '+e.type,true);
     });
   };
   open();
+  tabLock('host',code);
   setInterval(()=>{ // 15 sn sinyal gelmeyen oyuncuyu çevrimdışı say
     if(!S) return; let ch=false; const now=Date.now();
     for(const [pid,p] of Object.entries(S.players)){ if(pid===ME.pid) continue; const seen=lastSeen[pid]||0; const alive=[...NET.conns.values()].some(c=>c.pid===pid&&c.open)&&now-seen<15000; if(p.online!==alive){ p.online=alive; ch=true; } }
@@ -456,14 +468,29 @@ function startGuest(code){
   peer.on('open',connect);
   setInterval(()=>{ try{ if(conn&&conn.open) conn.send({type:'ping',pid:ME.pid}); }catch(e){} },5000);
   setInterval(()=>{ if(NET.pendingAt && Date.now()-NET.pendingAt>5000){ NET.pendingAt=0; toast('Hamle ev sahibine ulaşmadı, yeniden bağlanılıyor…'); try{ conn&&conn.close(); }catch(e){} setTimeout(connect,500); } },1000);
-  peer.on('disconnected',()=>{ setStatus('Sunucu bağlantısı koptu…',true); setTimeout(()=>{ try{peer.reconnect();}catch(e){} },1500); });
+  peer.on('disconnected',()=>{ if(peer.destroyed) return; const live=conn&&conn.open; setStatus(live?`Bağlı • ${code} (sunucuya yeniden bağlanılıyor)`:'Sunucu bağlantısı koptu…',!live); setTimeout(()=>{ if(peer.destroyed) return; try{ peer.reconnect(); }catch(e){ location.reload(); } },1500); });
   peer.on('error',e=>{
     if(e.type==='peer-unavailable'){ setStatus('Oda bulunamadı. Ev sahibi sayfayı açık tutmalı. Tekrar deneniyor…',true); setTimeout(connect,3000); }
-    else if(e.type==='network'||e.type==='server-error'||e.type==='socket-error'||e.type==='socket-closed'){ setStatus('Ağ hatası, yeniden deneniyor…',true); setTimeout(()=>{ try{peer.reconnect();}catch(x){} },3000); }
+    else if(['network','server-error','socket-error','socket-closed'].includes(e.type)){ setStatus('Ağ hatası, yeniden deneniyor…',true); setTimeout(()=>{ if(peer.destroyed) return; try{ peer.reconnect(); }catch(x){ location.reload(); } },3000); }
     else setStatus('Hata: '+e.type,true);
   });
+  tabLock('guest',code);
 }
 
+let TAB_ID = mkId(), bc=null;
+function tabLock(role,code){
+  try{
+    if(!('BroadcastChannel' in window)) return;
+    if(!bc){ bc=new BroadcastChannel('utavla'); bc.onmessage=ev=>{ const m=ev.data||{}; if(m.type==='claim'&&m.tab!==TAB_ID&&m.code===NET.code&&NET.peer){ yieldTab(); } }; }
+    bc.postMessage({type:'claim',tab:TAB_ID,code,role});
+  }catch(e){}
+}
+function yieldTab(){
+  NET.yielded=true;
+  try{ NET.peer&&NET.peer.destroy(); }catch(e){}
+  NET.peer=null; NET.conns=new Map(); NET.hostConn=null;
+  app.innerHTML=`<h1>Üniversite Tavlası</h1><div class="card"><p><b>Bu oda başka bir sekmede açıldı.</b></p><p class="muted">Aynı tarayıcıda aynı oda iki sekmede açık olamaz; oyun yeni sekmede devam ediyor. Bu sekmeyi kapatabilirsiniz.</p><br><button class="secondary" onclick="location.reload()">Burada devam et</button></div>`;
+}
 async function keepAwake(){ try{ if('wakeLock' in navigator){ await navigator.wakeLock.request('screen'); document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='visible') navigator.wakeLock.request('screen').catch(()=>{}); }); } }catch(e){} }
 
 /* ---------------- Arayüz ---------------- */
@@ -472,6 +499,7 @@ const app=$('app');
 function roomLink(code){ const u=new URL(location.href); u.search=''; u.searchParams.set('oda',code); if(PEER_OPTS.host) u.searchParams.set('ps',PEER_OPTS.host+':'+PEER_OPTS.port); return u.toString(); }
 
 function render(){
+  if(NET.yielded) return;
   if(!ME){ renderWelcome(); return; }
   if(!S){ app.innerHTML=`<h1>Üniversite Tavlası</h1><div class="card"><p>Oda: <b>${esc(NET.code||'')}</b></p><p class="muted">Ev sahibine bağlanılıyor… Ev sahibinin sayfayı açık tuttuğundan emin olun.</p><div class="conn" id="conn">${esc(NET.status)}</div><br><button class="secondary" onclick="leaveRoom()">Odadan çık</button></div>`; return; }
   if(S.phase==='lobby') renderLobby();
