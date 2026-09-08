@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0045)file:///C:/Users/serda/Downloads/index_4.html -->
+<!-- saved from url=(0045)file:///C:/Users/serda/Downloads/index_6.html -->
 <html lang="tr"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
@@ -47,7 +47,7 @@ input:focus{border-color:var(--accent)}
 .dot.on{background:var(--accent2)}
 .status{position:sticky;top:0;z-index:5;background:linear-gradient(var(--bg) 80%,transparent);padding:8px 0 10px}
 .bar{display:flex;align-items:center;justify-content:space-between;gap:8px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:8px 12px}
-.score{display:flex;gap:10px;align-items:center;font-weight:700}
+.score{display:flex;gap:6px;align-items:center;font-weight:700;white-space:nowrap}
 .score .a{color:var(--teamA)} .score .b{color:var(--teamB)}
 .turnmsg{font-weight:700;font-size:15px;padding:10px 12px;border-radius:12px;background:var(--panel2);border:1px solid var(--line);margin:8px 0;text-align:center}
 .turnmsg.me{background:#3a3222;border-color:var(--accent);color:var(--accent)}
@@ -81,6 +81,14 @@ svg{display:block;width:100%;height:auto;touch-action:manipulation}
 .badge{display:inline-block;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:700;background:var(--panel2);border:1px solid var(--line);color:var(--muted)}
 .badge.A{color:var(--teamA)} .badge.B{color:var(--teamB)}
 .result{text-align:center;padding:16px}
+.sb{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.sbteam{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:10px;text-align:center}
+.sbname{font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:.5px}
+.sbwho{font-size:12px;color:var(--muted);margin:2px 0 4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sbpts{font-size:40px;font-weight:800;line-height:1}
+.sbbar{height:6px;border-radius:3px;background:var(--line);margin-top:8px;overflow:hidden}.sbbar i{display:block;height:100%;border-radius:3px}
+.sbtable{width:100%;border-collapse:collapse;margin-top:10px;font-size:13px}.sbtable th,.sbtable td{padding:5px 6px;border-bottom:1px dotted var(--line)}.sbtable th{color:var(--muted);font-weight:600;text-align:center}
+.a{color:var(--teamA)}.b{color:var(--teamB)}
 .result h1{font-size:26px}
 .conn{font-size:12px;color:var(--muted);text-align:center;margin-top:6px}
 .conn.bad{color:var(--danger)}
@@ -90,7 +98,7 @@ svg{display:block;width:100%;height:auto;touch-action:manipulation}
 <div class="wrap" id="app">
     <h1>Oda 38KXJ2</h1>
     <div class="card">
-      <div class="link">file:///C:/Users/serda/Downloads/index_4.html?oda=38KXJ2</div>
+      <div class="link">file:///C:/Users/serda/Downloads/index_6.html?oda=38KXJ2</div>
       <div class="actions"><button onclick="shareLink()">Linki paylaş</button></div>
       <p class="muted tiny">Arkadaşlarınız bu linki telefonlarında açıp adlarını yazsın; sonra bir koltuğa dokunsun.</p>
     </div>
@@ -239,7 +247,7 @@ let lastSeen = {}; // ev sahibi: pid → son sinyal zamanı
 
 function newState(code,hostName){
   return { v:0, code, phase:'lobby', players:{}, seats:{A1:null,A2:null,B1:null,B2:null},
-    score:{A:0,B:0}, games:0, rollerIdx:{A:0,B:0}, startTeam:null, turn:null, boards:null, log:[], msg:'' };
+    score:{A:0,B:0}, games:0, history:[], target:10, rollerIdx:{A:0,B:0}, startTeam:null, turn:null, boards:null, log:[], msg:'' };
 }
 function pushLog(s){ S.log.unshift(s); if(S.log.length>12) S.log.length=12; }
 const seatName = seat => { const pid=S.seats[seat]; return pid&&S.players[pid]?S.players[pid].name:'—'; };
@@ -261,12 +269,13 @@ function beginTurn(team){
   S.turn={ team, roller:seats[idx], dice:null, players:{} };
   for(const s of seats) S.turn.players[s]={diceLeft:[],done:false,noMove:false,moves:0};
   turnSnap={};
+  rollFor(); // zar otomatik atılır
 }
 function rollFor(){
   const d=[die(),die()];
   S.turn.dice=d; S.rollN=(S.rollN||0)+1;
   const full = d[0]===d[1] ? [d[0],d[0],d[0],d[0]] : d.slice();
-  pushLog(`${seatName(S.turn.roller)} zar attı: ${d[0]}-${d[1]}${d[0]===d[1]?' (çift!)':''}`);
+  pushLog(`${TEAM_NAME[S.turn.team]} zarı: ${d[0]}-${d[1]}${d[0]===d[1]?' (çift!)':''}`);
   for(const s of teamSeats(S.turn.team)){
     const p=S.turn.players[s]; const b=S.boards[BOARD_OF(s)];
     turnSnap[s]={board:cloneBoard(b),dice:full.slice()};
@@ -287,7 +296,6 @@ function doMove(seat,from,dieVal){
   S.boards[bi]=nb; p.diceLeft.splice(p.diceLeft.indexOf(dieVal),1); p.moves++;
   const res=boardResult(nb);
   if(res){ nb.result=res; p.done=true; p.diceLeft=[]; pushLog(`${bi}. tavla bitti: ${seatName(seat)} ${res.mars?'MARS ile ':''}kazandı!`); }
-  else if(!p.diceLeft.length || !legalFirstMoves(nb,team,p.diceLeft).length){ p.done=true; p.diceLeft=[]; } // otomatik bitir
   checkTurnEnd();
   return null;
 }
@@ -306,9 +314,11 @@ function checkTurnEnd(){
   if(!teamSeats(t.team).every(s=>t.players[s].done)) return;
   const r1=S.boards[1].result, r2=S.boards[2].result;
   if(r1&&r2){
-    for(const r of [r1,r2]) S.score[r.winner]+= r.mars?2:1;
-    S.phase='ended'; S.turn=null;
-    pushLog(`Oyun bitti. Skor ${S.score.A}-${S.score.B}.`);
+    const g={A:0,B:0}; for(const r of [r1,r2]) g[r.winner]+= r.mars?2:1;
+    S.score.A+=g.A; S.score.B+=g.B; (S.history=S.history||[]).push({n:S.games,A:g.A,B:g.B});
+    S.turn=null; S.target=S.target||10;
+    if((S.score.A>=S.target||S.score.B>=S.target) && S.score.A!==S.score.B){ S.phase='matchOver'; pushLog(`MAÇ BİTTİ! ${TEAM_NAME[S.score.A>S.score.B?'A':'B']} ${S.score.A}-${S.score.B} kazandı.`); }
+    else { S.phase='ended'; pushLog(`${S.games}. oyun bitti: ${g.A}-${g.B}. Genel skor ${S.score.A}-${S.score.B}.`); }
     return;
   }
   beginTurn(t.team==='A'?'B':'A');
@@ -351,7 +361,8 @@ function handleAction(pid,a){
       const err=doMove(seat,a.from,a.die); if(err) reply(pid,err); break; }
     case 'undo': { if(S.phase!=='playing'||!S.turn||!S.turn.dice||!seat||TEAM_OF(seat)!==S.turn.team) return; const e=doUndo(seat); if(e) reply(pid,e); break; }
     case 'finish': { if(S.phase!=='playing'||!S.turn||!S.turn.dice||!seat||TEAM_OF(seat)!==S.turn.team) return; const e=doFinish(seat); if(e) reply(pid,e); break; }
-    case 'resetScore': { if(pid!==ME.pid) return; S.score={A:0,B:0}; S.games=0; pushLog('Skor sıfırlandı.'); break; }
+    case 'resetScore': { if(pid!==ME.pid) return; S.score={A:0,B:0}; S.games=0; S.history=[]; S.startTeam=null; pushLog('Yeni maç: skor sıfırlandı.'); if(S.phase==='matchOver') S.phase='ended'; break; }
+    case 'newMatch': { if(pid!==ME.pid) return; S.score={A:0,B:0}; S.games=0; S.history=[]; S.startTeam=null; pushLog('Yeni maç başlıyor.'); startGame(); break; }
     case 'toLobby': { if(pid!==ME.pid) return; S.phase='lobby'; S.turn=null; S.boards=null; break; }
     default: return;
   }
@@ -483,7 +494,7 @@ function renderWelcome(){
     `<div class="card"><h2>Yeni oda</h2><button onclick="createRoom()">Oda kur ve link al</button></div>
      <div class="card"><h2>Kodla katıl</h2><div class="row"><input id="code" maxlength="6" placeholder="Oda kodu" style="text-transform:uppercase;letter-spacing:3px" autocomplete="off"><button class="secondary" onclick="joinRoom($('code').value)">Katıl</button></div></div>`}
     ${last&&last.code&&(!joinCode||last.code===joinCode)?`<div class="card"><h2>Devam et</h2><p class="muted tiny">${last.role==='host'?'Kurduğunuz oda':'Katıldığınız oda'}: <b>${esc(last.code)}</b> (${esc(last.me.name)})</p><button class="secondary" onclick="resumeLast()">Kaldığım yerden devam et</button></div>`:''}
-    <p class="muted tiny" style="text-align:center;margin-top:18px">Kurallar: her el bir takım zar atar, takımın iki üyesi de aynı zarı kendi tavlasında oynar. Zarı takım üyeleri dönüşümlü atar. Galibiyet 1, mars 2 puan; takım puanı iki tavlanın toplamıdır.</p>`;
+    <p class="muted tiny" style="text-align:center;margin-top:18px">Kurallar: her el bir takım zar atar, takımın iki üyesi de aynı zarı kendi tavlasında oynar. Zar her el otomatik atılır. Galibiyet 1, mars 2 puan; 10 puana ulaşan takım maçı kazanır.</p>`;
 }
 function readName(){ const n=($('name')?.value||'').trim(); if(!n){ toast('Önce adınızı yazın.'); return null; } ls.set('utavla:name',n); return n; }
 function createRoom(){ const n=readName(); if(!n) return; ME={pid:mkId(),name:n}; keepAwake(); startHost(mkCode()); }
@@ -513,7 +524,7 @@ function renderLobby(){
       ${waiting?`<p class="muted tiny">Bekleyenler: ${waiting}</p>`:''}
       ${mySeat?`<button class="secondary small" onclick="act({type:'stand'})">Koltuktan kalk</button>`:''}
     </div>
-    ${S.games?`<div class="card"><div class="score" style="justify-content:center;font-size:18px"><span class="a">${TEAM_NAME.A} ${S.score.A}</span><span class="muted">—</span><span class="b">${S.score.B} ${TEAM_NAME.B}</span></div></div>`:''}
+    ${S.games?renderScoreboard():''}
     ${isHost?`<button onclick="act({type:'start'})" ${SEATS.some(s=>!S.seats[s])?'disabled':''}>Oyunu başlat</button><p class="muted tiny" style="text-align:center">Siz ev sahibisiniz: oyun boyunca bu sayfayı açık tutun.</p>`:`<p class="muted" style="text-align:center">Ev sahibinin (${esc(S.players[Object.keys(S.players)[0]]?.name||'')}) oyunu başlatması bekleniyor…</p>`}
     <div class="conn" id="conn"></div>
     <p style="text-align:center;margin-top:14px"><button class="secondary small" onclick="leaveRoom()">Odadan çık</button></p>`;
@@ -526,10 +537,10 @@ function renderGame(){
   if(UI.boardTab==null) UI.boardTab=myBoard||1;
   // durum mesajı
   let msg='', mine=false;
-  if(S.phase==='ended'){ msg='Oyun bitti'; }
-  else if(t){
-    if(!t.dice){ if(mySeat===t.roller){ msg='Sıra sizde: zar atın!'; mine=true; } else msg=`${seatName(t.roller)} zar atıyor… (${TEAM_NAME[t.team]})`; }
-    else if(myTeam===t.team){ const p=t.players[mySeat]; const partner=teamSeats(t.team).find(s=>s!==mySeat); if(p.done) msg=`Hamleniz tamam, ${seatName(partner)} bekleniyor…`; else { msg='Zarı oynayın: '+p.diceLeft.join(' · '); mine=true; } }
+  if(S.phase==='ended'){ msg=`${S.games}. oyun bitti`; }
+  else if(S.phase==='matchOver'){ msg='Maç bitti'; }
+  else if(t&&t.dice){
+    if(myTeam===t.team){ const p=t.players[mySeat]; const partner=teamSeats(t.team).find(s=>s!==mySeat); if(p.done) msg=`Onaylandı, ${seatName(partner)} bekleniyor…`; else if(!p.diceLeft.length) { msg='Hamleniz bitti — onaylayın'; mine=true; } else { msg='Zarı oynayın: '+p.diceLeft.join(' · '); mine=true; } }
     else msg=`${TEAM_NAME[t.team]} oynuyor…`;
   }
   let diceHtml='';
@@ -546,21 +557,22 @@ function renderGame(){
   const p=mySeat&&t&&t.dice&&myTeam===t.team?t.players[mySeat]:null;
   const legal = p&&!p.done ? legalFirstMoves(S.boards[myBoard],myTeam,p.diceLeft) : [];
   const canUndo = p&&p.moves>0;
+  const canConfirm = p&&!p.done&&legal.length===0;
   const viewSide = myTeam||'A';
 
   app.innerHTML=`
     <div class="status"><div class="bar">
-      <div class="score"><span class="a">${TEAM_NAME.A} ${S.score.A}</span><span class="muted">—</span><span class="b">${S.score.B} ${TEAM_NAME.B}</span></div>
-      <span class="badge ${myTeam||''}">${mySeat?esc(ME.name)+' • '+TEAM_NAME[myTeam]+' • '+myBoard+'. tavla':'İzleyici'}</span>
+      <div class="score"><span class="a tiny">1. TAKIM</span><span style="font-size:20px"><span class="a">${S.score.A}</span><span class="muted"> : </span><span class="b">${S.score.B}</span></span><span class="b tiny">2. TAKIM</span></div>
+      <span class="badge ${myTeam||''}" style="white-space:nowrap">${mySeat?esc(ME.name)+' • '+myBoard+'. tavla':'İzleyici'}</span>
     </div></div>
     ${renderPresence(mySeat)}
     <div class="turnmsg ${mine?'me':''}">${esc(msg)}</div>
     ${diceHtml}
-    ${t&&!t.dice&&mySeat===t.roller?`<button onclick="act({type:'roll'})">🎲 Zar at</button>`:''}
-    ${p&&canUndo?`<div class="actions"><button class="secondary" onclick="act({type:'undo'})">↶ Hamleyi geri al</button></div>`:''}
-    ${S.phase==='ended'?renderResult(isHost):''}
+    ${p&&(canUndo||canConfirm)?`<div class="actions"><button class="secondary" onclick="act({type:'undo'})" ${canUndo?'':'disabled'}>↶ Geri al</button><button onclick="act({type:'finish'})" ${canConfirm?'':'disabled'}>✓ Onayla</button></div>`:''}
+    ${S.phase==='ended'||S.phase==='matchOver'?renderResult(isHost):''}
     <div class="tabs"><button class="${UI.boardTab===1?'on':'off'}" onclick="UI.boardTab=1;UI.sel=null;render()">1. tavla: ${esc(seatName('A1'))} – ${esc(seatName('B1'))}</button><button class="${UI.boardTab===2?'on':'off'}" onclick="UI.boardTab=2;UI.sel=null;render()">2. tavla: ${esc(seatName('A2'))} – ${esc(seatName('B2'))}</button></div>
     ${renderBoard(UI.boardTab, viewSide, UI.boardTab===myBoard?legal:[], UI.boardTab===myBoard&&p&&!p.done)}
+    ${renderScoreboard()}
     <div class="card"><h2>Akış</h2><div class="log">${S.log.map(l=>`<div>${esc(l)}</div>`).join('')}</div></div>
     <div class="conn" id="conn"></div>
     ${isHost?`<p style="text-align:center"><button class="secondary small" onclick="if(confirm('Oyunu bırakıp lobiye dönülsün mü?'))act({type:'toLobby'})">Lobiye dön</button></p>`:''}`;
@@ -578,7 +590,20 @@ function renderPresence(mySeat){
 }
 function renderResult(isHost){
   const r1=S.boards[1].result, r2=S.boards[2].result; const line=(bi,r)=>`${bi}. tavla: <b>${esc(seatName(r.winner+bi))}</b> ${r.mars?'<b>mars</b> etti (2 puan)':'kazandı (1 puan)'}`;
-  return `<div class="card result"><h1>${S.score.A===S.score.B?'Skor eşit!':(S.score.A>S.score.B?TEAM_NAME.A:TEAM_NAME.B)+' önde'}</h1><p>${line(1,r1)}<br>${line(2,r2)}</p>${isHost?`<div class="actions"><button onclick="act({type:'start'})">Yeni oyun</button><button class="secondary" onclick="if(confirm('Skor sıfırlansın mı?'))act({type:'resetScore'})">Skoru sıfırla</button></div>`:`<p class="muted">Ev sahibi yeni oyunu başlatabilir.</p>`}</div>`;
+  if(S.phase==='matchOver'){
+    const w=S.score.A>S.score.B?'A':'B';
+    return `<div class="card result" style="border-color:var(--accent)"><h1>🏆 ${TEAM_NAME[w]} maçı kazandı!</h1><div class="score" style="justify-content:center;font-size:30px;margin:6px 0"><span class="a">${S.score.A}</span><span class="muted">—</span><span class="b">${S.score.B}</span></div><p class="muted">${esc(seatName(w+'1'))} & ${esc(seatName(w+'2'))}</p><p>${line(1,r1)}<br>${line(2,r2)}</p>${isHost?`<div class="actions"><button onclick="act({type:'newMatch'})">Yeni maç (0-0)</button></div>`:`<p class="muted">Ev sahibi yeni maçı başlatabilir.</p>`}</div>`;
+  }
+  return `<div class="card result"><h1>${S.score.A===S.score.B?'Skor eşit':(S.score.A>S.score.B?TEAM_NAME.A:TEAM_NAME.B)+' önde'}: ${S.score.A}-${S.score.B}</h1><p>${line(1,r1)}<br>${line(2,r2)}</p>${isHost?`<div class="actions"><button onclick="act({type:'start'})">Sonraki oyun</button><button class="secondary" onclick="if(confirm('Skor sıfırlansın mı?'))act({type:'resetScore'})">Skoru sıfırla</button></div>`:`<p class="muted">Ev sahibi sonraki oyunu başlatabilir.</p>`}</div>`;
+}
+function renderScoreboard(){
+  const hist=S.history||[]; const target=S.target||10;
+  const rows=hist.map(h=>`<tr><td>${h.n}. oyun</td><td class="a" style="text-align:center">${h.A}</td><td class="b" style="text-align:center">${h.B}</td></tr>`).join('');
+  const pct=t=>Math.min(100,Math.round(100*S.score[t]/target));
+  return `<div class="card"><h2>Genel skor tablosu <span class="muted" style="text-transform:none;letter-spacing:0">• ${target} puana kadar</span></h2>
+    <div class="sb"><div class="sbteam"><div class="sbname a">${TEAM_NAME.A}</div><div class="sbwho">${esc(seatName('A1'))} & ${esc(seatName('A2'))}</div><div class="sbpts a">${S.score.A}</div><div class="sbbar"><i style="width:${pct('A')}%;background:var(--teamA)"></i></div></div>
+    <div class="sbteam"><div class="sbname b">${TEAM_NAME.B}</div><div class="sbwho">${esc(seatName('B1'))} & ${esc(seatName('B2'))}</div><div class="sbpts b">${S.score.B}</div><div class="sbbar"><i style="width:${pct('B')}%;background:var(--teamB)"></i></div></div></div>
+    ${rows?`<table class="sbtable"><thead><tr><th></th><th class="a">1. Takım</th><th class="b">2. Takım</th></tr></thead><tbody>${rows}</tbody></table>`:`<p class="muted tiny" style="text-align:center;margin-top:8px">Henüz biten oyun yok. Galibiyet 1, mars 2 puan.</p>`}</div>`;
 }
 
 /* --- Tavla çizimi (SVG) ---
