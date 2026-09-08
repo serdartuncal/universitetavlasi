@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0045)file:///C:/Users/serda/Downloads/index_9.html -->
+<!-- saved from url=(0046)file:///C:/Users/serda/Downloads/index_10.html -->
 <html lang="tr"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
@@ -20,7 +20,8 @@ h1{font-size:22px;margin:0 0 4px;font-weight:700;letter-spacing:.2px}
 h2{font-size:16px;margin:14px 0 6px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.6px}
 p{margin:6px 0}
 .hidden{display:none!important}
-.wrap{max-width:560px;margin:0 auto;padding:14px 12px 30px}
+.wrap{max-width:600px;margin:0 auto;padding:10px 12px 30px}
+.wrap.game{padding:4px 4px 20px}
 .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px;margin:10px 0}
 button{font:inherit;font-weight:600;border:0;border-radius:12px;padding:13px 16px;background:var(--accent);color:#1c1a17;cursor:pointer;width:100%;transition:transform .05s}
 button:active{transform:scale(.98)}
@@ -28,7 +29,7 @@ button:disabled{opacity:.4;cursor:default}
 button.secondary{background:var(--panel2);color:var(--ink);border:1px solid var(--line)}
 button.small{width:auto;padding:8px 12px;font-size:13px;border-radius:9px}
 button.danger{background:var(--danger);color:#fff}
-input{font:inherit;width:100%;padding:12px;border-radius:10px;border:1px solid var(--line);background:var(--panel2);color:var(--ink);outline:none}
+input:not([type=checkbox]){font:inherit;width:100%;padding:12px;border-radius:10px;border:1px solid var(--line);background:var(--panel2);color:var(--ink);outline:none}
 input:focus{border-color:var(--accent)}
 .row{display:flex;gap:8px;align-items:center}
 .row>*{flex:1}
@@ -45,21 +46,23 @@ input:focus{border-color:var(--accent)}
 .seat .who.empty{color:var(--muted);font-weight:400;font-style:italic}
 .dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#666;margin-right:5px;vertical-align:1px}
 .dot.on{background:var(--accent2)}
-.status{position:sticky;top:0;z-index:5;background:linear-gradient(var(--bg) 80%,transparent);padding:8px 0 10px}
-.bar{display:flex;align-items:center;justify-content:space-between;gap:8px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:8px 12px}
+.status{padding:2px 0 4px}
+.bar{display:flex;align-items:center;justify-content:space-between;gap:8px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:5px 10px}
 .score{display:flex;gap:6px;align-items:center;font-weight:700;white-space:nowrap}
 .score .a{color:var(--teamA)} .score .b{color:var(--teamB)}
-.turnmsg{font-weight:700;font-size:15px;padding:10px 12px;border-radius:12px;background:var(--panel2);border:1px solid var(--line);margin:8px 0;text-align:center}
+.turnmsg{font-weight:700;font-size:14px;padding:7px 10px;border-radius:10px;background:var(--panel2);border:1px solid var(--line);margin:5px 0;text-align:center}
 .turnmsg.me{background:#3a3222;border-color:var(--accent);color:var(--accent)}
 .dice{display:flex;gap:8px;justify-content:center;align-items:center;margin:8px 0}
 svg.die{width:54px;height:54px;filter:drop-shadow(0 3px 3px rgba(0,0,0,.45));transition:opacity .2s}
 svg.die.used{opacity:.25;filter:none}
 svg.die.roll{animation:tumble .7s cubic-bezier(.2,.8,.3,1)}
+g.dg{transform-box:fill-box;transform-origin:center}
+g.dg.roll{animation:tumble .7s cubic-bezier(.2,.8,.3,1)}
 @keyframes tumble{0%{transform:translateY(-26px) rotate(-200deg) scale(.6);opacity:0}55%{transform:translateY(4px) rotate(20deg) scale(1.05);opacity:1}80%{transform:translateY(-3px) rotate(-6deg)}100%{transform:translateY(0) rotate(0)}}
 .dice svg.die:nth-child(2).roll{animation-delay:.08s;animation-fill-mode:backwards}
 .boardwrap{border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.5),0 1px 0 rgba(255,255,255,.08) inset;overflow:hidden}
 .sel{stroke:#7cc4a0!important;stroke-width:3.5!important}
-.boardhead{display:flex;justify-content:space-between;align-items:center;font-size:13px;margin:8px 2px 6px}
+.boardhead{display:flex;justify-content:space-between;align-items:center;font-size:12px;margin:2px 2px 4px}
 .boardhead b{font-size:14px}
 svg{display:block;width:100%;height:auto;touch-action:manipulation}
 .pt{cursor:pointer}
@@ -69,11 +72,12 @@ svg{display:block;width:100%;height:auto;touch-action:manipulation}
 .chkA{fill:var(--chkA)} .chkB{fill:var(--chkB)}
 .cnt{font-size:14px;font-weight:800;pointer-events:none}
 .cntA{fill:#1c1a17} .cntB{fill:#f3ede4}
-.actions{display:flex;gap:8px;margin:10px 0}
+.actions{display:flex;gap:8px;margin:6px 0}
+.actions button{padding:10px 12px}
 .log{font-size:13px;color:var(--muted);max-height:120px;overflow:auto}
 .log div{padding:2px 0;border-bottom:1px dotted var(--line)}
-.tabs{display:flex;gap:6px;margin:12px 0 6px}
-.tabs button{padding:9px;border-radius:10px;font-size:13px}
+.tabs{display:flex;gap:6px;margin:6px 0 4px}
+.tabs button{padding:7px;border-radius:9px;font-size:12px}
 .tabs button.on{background:var(--accent);color:#1c1a17}
 .tabs button.off{background:var(--panel2);color:var(--muted);border:1px solid var(--line)}
 .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#111;color:#fff;padding:10px 16px;border-radius:12px;font-size:14px;opacity:0;transition:opacity .2s;pointer-events:none;z-index:99;max-width:90vw;text-align:center}
@@ -81,6 +85,10 @@ svg{display:block;width:100%;height:auto;touch-action:manipulation}
 .badge{display:inline-block;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:700;background:var(--panel2);border:1px solid var(--line);color:var(--muted)}
 .badge.A{color:var(--teamA)} .badge.B{color:var(--teamB)}
 .result{text-align:center;padding:16px}
+.sbmini{padding:8px 12px;margin:8px 0}
+.sbrow{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.sbt{flex:1;min-width:0}.sbt .sbname{font-size:12px}.sbt .sbwho{margin:0}
+.sbbig{font-size:26px;font-weight:800;display:flex;gap:6px;align-items:center}
 .sb{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .sbteam{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:10px;text-align:center}
 .sbname{font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:.5px}
@@ -98,7 +106,7 @@ svg{display:block;width:100%;height:auto;touch-action:manipulation}
 <div class="wrap" id="app">
     <h1>Oda 38KXJ2</h1>
     <div class="card">
-      <div class="link">file:///C:/Users/serda/Downloads/index_9.html?oda=38KXJ2</div>
+      <div class="link">file:///C:/Users/serda/Downloads/index_10.html?oda=38KXJ2</div>
       <div class="actions"><button onclick="shareLink()">Linki paylaş</button></div>
       <p class="muted tiny">Arkadaşlarınız bu linki telefonlarında açıp adlarını yazsın; sonra bir koltuğa dokunsun.</p>
     </div>
@@ -279,7 +287,7 @@ function beginTurn(team){
   const seats=teamSeats(team);
   const idx=S.rollerIdx[team]; S.rollerIdx[team]=1-idx;
   S.turn={ team, roller:seats[idx], dice:null, players:{} };
-  for(const s of seats) S.turn.players[s]={diceLeft:[],done:false,noMove:false,moves:0};
+  for(const s of seats) S.turn.players[s]={diceLeft:[],done:false,noMove:false,moves:0,autoMoves:0};
   turnSnap={};
   rollFor(); // zar otomatik atılır
 }
@@ -295,6 +303,7 @@ function rollFor(){
     p.diceLeft=full.slice();
     if(!legalFirstMoves(b,S.turn.team,p.diceLeft).length){ p.noMove=true; p.done=true; p.diceLeft=[]; pushLog(`${seatName(s)}: oynanacak hamle yok.`); }
   }
+  for(const s of teamSeats(S.turn.team)) autoPlay(s);
   checkTurnEnd();
 }
 function doMove(seat,from,dieVal){
@@ -311,9 +320,33 @@ function doMove(seat,from,dieVal){
   checkTurnEnd();
   return null;
 }
+// Otomatik toplama: taşların hepsi evdeyse ve tek bir hamle seçeneği varsa kendiliğinden oynar
+function autoPlay(seat){
+  const t=S.turn; if(!t||!t.dice) return; const p=t.players[seat]; if(!p||p.done) return;
+  const pl=S.players[S.seats[seat]]; if(pl&&pl.auto===false) return;
+  const team=TEAM_OF(seat); const bi=BOARD_OF(seat);
+  const b0=S.boards[bi]; if(!allHome(b0,team)) return;
+  if(!p.diceLeft.length) return;
+  // Tüm en uzun hamle dizilerinin vardığı son konumlar aynıysa seçim yoktur → otomatik oyna
+  const key=bb=>bb.pts.join(',')+'|'+bb.off.A+'|'+bb.off.B+'|'+bb.bar.A+'|'+bb.bar.B;
+  const finals=new Set(); let firstSeq=null, nodes=0;
+  const dfs=(bb,dice,seq)=>{
+    if(nodes++>600) return;
+    const legal=legalFirstMoves(bb,team,dice);
+    if(!legal.length){ finals.add(key(bb)); if(!firstSeq) firstSeq=seq; return; }
+    for(const mv of legal){ if(finals.size>1) return; const nb=applyMove(bb,team,mv.from,mv.die); const rem=dice.slice(); rem.splice(rem.indexOf(mv.die),1); dfs(nb,rem,[...seq,mv]); }
+  };
+  dfs(b0,p.diceLeft.slice(),[]);
+  if(nodes>600||finals.size!==1||!firstSeq||!firstSeq.length) return;
+  for(const mv of firstSeq){ if(p.done) break; if(doMove(seat,mv.from,mv.die)) break; p.autoMoves++; }
+  if(!p.done && p.moves>0 && p.autoMoves===p.moves){
+    const legal=legalFirstMoves(S.boards[bi],team,p.diceLeft);
+    if(!legal.length){ p.done=true; p.diceLeft=[]; checkTurnEnd(); }
+  }
+}
 function doUndo(seat){
   const p=S.turn.players[seat]; if(!turnSnap[seat]||!p.moves) return 'Geri alınacak hamle yok.';
-  S.boards[BOARD_OF(seat)]=cloneBoard(turnSnap[seat].board); p.diceLeft=turnSnap[seat].dice.slice(); p.done=false; p.moves=0; return null;
+  S.boards[BOARD_OF(seat)]=cloneBoard(turnSnap[seat].board); p.diceLeft=turnSnap[seat].dice.slice(); p.done=false; p.moves=0; p.autoMoves=0; return null;
 }
 function doFinish(seat){
   const p=S.turn.players[seat]; if(p.done) return null;
@@ -321,9 +354,16 @@ function doFinish(seat){
   if(p.diceLeft.length && legalFirstMoves(S.boards[BOARD_OF(seat)],team,p.diceLeft).length) return 'Önce kalan zarları oynayın.';
   p.done=true; p.diceLeft=[]; checkTurnEnd(); return null;
 }
+function setBoardResult(bi,res,why){
+  const b=S.boards[bi]; if(b.result) return; b.result=res; b.resign=null;
+  pushLog(`${bi}. tavla: ${seatName(res.winner+bi)} ${res.mars?'MARS ile ':''}kazandı${why?' ('+why+')':''}.`);
+  if(S.turn){ for(const s of teamSeats(S.turn.team)){ if(BOARD_OF(s)===bi){ const p=S.turn.players[s]; p.done=true; p.diceLeft=[]; } } checkTurnEnd(); }
+  else if(S.boards[1].result&&S.boards[2].result){ checkTurnEnd(); }
+}
 function checkTurnEnd(){
-  const t=S.turn; if(!t||!t.dice) return;
-  if(!teamSeats(t.team).every(s=>t.players[s].done)) return;
+  if(S.phase!=='playing') return;
+  const t=S.turn; if(t&&!t.dice) return;
+  if(t&&!teamSeats(t.team).every(s=>t.players[s].done)) return;
   const r1=S.boards[1].result, r2=S.boards[2].result;
   if(r1&&r2){
     const g={A:0,B:0}; for(const r of [r1,r2]) g[r.winner]+= r.mars?2:1;
@@ -333,6 +373,7 @@ function checkTurnEnd(){
     else { S.phase='ended'; pushLog(`${S.games}. oyun bitti: ${g.A}-${g.B}. Genel skor ${S.score.A}-${S.score.B}.`); }
     return;
   }
+  if(!t) return;
   beginTurn(t.team==='A'?'B':'A');
 }
 
@@ -344,6 +385,7 @@ function handleAction(pid,a){
     case 'hello': {
       if(!S.players[pid]) S.players[pid]={name:(a.name||'Oyuncu').slice(0,18),online:true};
       else { S.players[pid].online=true; if(a.name) S.players[pid].name=a.name.slice(0,18); }
+      if(typeof a.auto==='boolean') S.players[pid].auto=a.auto;
       break; }
     case 'sit': {
       if(S.phase!=='lobby') return;
@@ -359,6 +401,7 @@ function handleAction(pid,a){
       S.seats[s]=pid; pushLog(`${S.players[pid]?.name||'?'}, ${cur&&S.players[cur]?S.players[cur].name+'\'nin yerine':''} ${s[1]}. tavlaya oturdu.`);
       break; }
     case 'stand': { if(S.phase!=='lobby') return; for(const k of SEATS) if(S.seats[k]===pid) S.seats[k]=null; break; }
+    case 'pref': { if(S.players[pid]){ S.players[pid].auto=a.auto!==false; if(S.turn&&seat&&TEAM_OF(seat)===S.turn.team&&S.players[pid].auto) autoPlay(seat); } break; }
     case 'rename': { if(S.players[pid]&&a.name) S.players[pid].name=a.name.slice(0,18); break; }
     case 'start': {
       if(pid!==ME.pid) return; if(S.phase!=='lobby'&&S.phase!=='ended') return;
@@ -370,9 +413,31 @@ function handleAction(pid,a){
       rollFor(); break; }
     case 'move': {
       if(S.phase!=='playing'||!S.turn||!S.turn.dice||!seat||TEAM_OF(seat)!==S.turn.team) return;
-      const err=doMove(seat,a.from,a.die); if(err) reply(pid,err); break; }
+      const err=doMove(seat,a.from,a.die); if(err) reply(pid,err); else autoPlay(seat); break; }
+    case 'moves': {
+      if(S.phase!=='playing'||!S.turn||!S.turn.dice||!seat||TEAM_OF(seat)!==S.turn.team) return;
+      if(!Array.isArray(a.seq)||!a.seq.length||a.seq.length>4) return;
+      const bi=BOARD_OF(seat); const backup={board:cloneBoard(S.boards[bi]),p:JSON.parse(JSON.stringify(S.turn.players[seat]))};
+      let err=null; for(const mv of a.seq){ err=doMove(seat,mv.from,mv.die); if(err) break; if(S.phase!=='playing'||!S.turn) break; }
+      if(err){ S.boards[bi]=backup.board; S.turn.players[seat]=backup.p; reply(pid,'Bu hamle yapılamadı: '+err); }
+      else autoPlay(seat);
+      break; }
     case 'undo': { if(S.phase!=='playing'||!S.turn||!S.turn.dice||!seat||TEAM_OF(seat)!==S.turn.team) return; const e=doUndo(seat); if(e) reply(pid,e); break; }
     case 'finish': { if(S.phase!=='playing'||!S.turn||!S.turn.dice||!seat||TEAM_OF(seat)!==S.turn.team) return; const e=doFinish(seat); if(e) reply(pid,e); break; }
+    case 'resign': {
+      if(S.phase!=='playing'||!seat) return; const bi=BOARD_OF(seat); const b=S.boards[bi]; if(b.result) return;
+      const side=TEAM_OF(seat); const opp=side==='A'?'B':'A';
+      if(b.off[side]>0){ setBoardResult(bi,{winner:opp,mars:false},`${seatName(seat)} pes etti`); break; }
+      if(b.resign&&b.resign.by===side){ reply(pid,'Pes isteğiniz zaten rakibe iletildi.'); return; }
+      if(b.resignDenied===S.rollN){ reply(pid,'Rakip bu elde reddetti; bir sonraki elde tekrar deneyebilirsiniz.'); return; }
+      b.resign={by:side,t:Date.now()}; pushLog(`${seatName(seat)} pes etmek istiyor (mars ihtimali var, rakibe soruluyor).`);
+      break; }
+    case 'resignAnswer': {
+      if(S.phase!=='playing'||!seat) return; const bi=BOARD_OF(seat); const b=S.boards[bi]; if(b.result||!b.resign) return;
+      const side=TEAM_OF(seat); if(b.resign.by===side) return; // sadece rakip cevaplar
+      if(a.accept){ setBoardResult(bi,{winner:side,mars:false},`${seatName(b.resign.by+bi)} pes etti`); }
+      else { b.resign=null; b.resignDenied=S.rollN; pushLog(`${seatName(seat)} pes teklifini reddetti, mars için devam ediyor.`); }
+      break; }
     case 'resetScore': { if(pid!==ME.pid) return; S.score={A:0,B:0}; S.games=0; S.history=[]; S.startTeam=null; pushLog('Yeni maç: skor sıfırlandı.'); if(S.phase==='matchOver') S.phase='ended'; break; }
     case 'newMatch': { if(pid!==ME.pid) return; S.score={A:0,B:0}; S.games=0; S.history=[]; S.startTeam=null; pushLog('Yeni maç başlıyor.'); startGame(); break; }
     case 'toLobby': { if(pid!==ME.pid) return; S.phase='lobby'; S.turn=null; S.boards=null; break; }
@@ -431,7 +496,7 @@ function startHost(code,restore){
   NET.role='host'; NET.code=code; NET.hs=mkId(); NET.hostStart=Date.now();
   if(restore){ S=restore.state; turnSnap=restore.snap||{}; for(const p of Object.values(S.players)) p.online=false; if(!S.players[ME.pid]) S.players[ME.pid]={name:ME.name}; S.players[ME.pid].online=true; S.players[ME.pid].name=ME.name; }
   else { S=newState(code); S.players[ME.pid]={name:ME.name,online:true}; }
-  S.host={pid:ME.pid,name:ME.name};
+  S.host={pid:ME.pid,name:ME.name}; S.players[ME.pid].auto=ls.get('utavla:auto',true);
   ls.set('utavla:last',{role:'host',code,me:ME});
   render();
   const t=T(code);
@@ -478,7 +543,7 @@ function startGuest(code,brokerIdx){
   connectBroker(brokerIdx||0,{},(c)=>{
     setStatus('Bağlı • '+code);
     c.subscribe([t.state,t.host,t.msg],{qos:1});
-    const hello=()=>c.publish(t.act,enc({type:'action',pid:ME.pid,action:{type:'hello',name:ME.name}}),{qos:1});
+    const hello=()=>c.publish(t.act,enc({type:'action',pid:ME.pid,action:{type:'hello',name:ME.name,auto:ls.get('utavla:auto',true)}}),{qos:1});
     hello();
     c.on('message',(topic,payload)=>{
       const m=dec(payload); if(!m) return;
@@ -524,6 +589,7 @@ function roomLink(code){ const u=new URL(location.href); u.search=''; u.searchPa
 
 function render(){
   if(NET.yielded) return;
+  app.className='wrap'+(S&&ME&&S.phase!=='lobby'?' game':'');
   if(!ME){ renderWelcome(); return; }
   if(!S){ app.innerHTML=`<h1>Üniversite Tavlası</h1><div class="card"><p>Oda: <b>${esc(NET.code||'')}</b></p><p class="muted">${NET.hostOnline===false?'Ev sahibi şu an çevrimdışı; sayfayı açınca oyun gelecek.':'Odaya bağlanılıyor… Ev sahibinin sayfayı açık tuttuğundan emin olun.'}</p><div class="conn" id="conn">${esc(NET.status)}</div><br><button class="secondary" onclick="leaveRoom()">Odadan çık</button></div>`; return; }
   if(S.phase==='lobby') renderLobby();
@@ -596,15 +662,7 @@ function renderGame(){
     if(myTeam===t.team){ const p=t.players[mySeat]; const partner=teamSeats(t.team).find(s=>s!==mySeat); if(p.done) msg=`Onaylandı, ${seatName(partner)} bekleniyor…`; else if(!p.diceLeft.length) { msg='Hamleniz bitti — onaylayın'; mine=true; } else { msg='Zarı oynayın: '+p.diceLeft.join(' · '); mine=true; } }
     else msg=`${TEAM_NAME[t.team]} oynuyor…`;
   }
-  let diceHtml='';
-  if(t&&t.dice){
-    const dbl=t.dice[0]===t.dice[1];
-    const shown = dbl ? [t.dice[0],t.dice[0],t.dice[0],t.dice[0]] : t.dice;
-    const pp = mySeat&&myTeam===t.team ? t.players[mySeat] : null;
-    const rollKey = t.dice.join(',')+'|'+S.games+'|'+t.roller+'|'+S.rollN;
-    const anim = UI.lastDice!==rollKey; UI.lastDice=rollKey;
-    diceHtml=`<div class="dice">${shown.map((d,i)=>{ let used=false; if(pp){ used = dbl ? i>=pp.diceLeft.length : !pp.diceLeft.includes(d); } return dieSVG(d,(used?'used ':'')+(anim?'roll':'')); }).join('')}</div>`;
-  }
+  const diceHtml='';
 
   // hangi tavlalar gösterilecek
   const p=mySeat&&t&&t.dice&&myTeam===t.team?t.players[mySeat]:null;
@@ -626,8 +684,8 @@ function renderGame(){
     ${S.phase==='ended'||S.phase==='matchOver'?renderResult(isHost):''}
     <div class="tabs"><button class="${UI.boardTab===1?'on':'off'}" onclick="UI.boardTab=1;UI.sel=null;render()">1. tavla: ${esc(seatName('A1'))} – ${esc(seatName('B1'))}</button><button class="${UI.boardTab===2?'on':'off'}" onclick="UI.boardTab=2;UI.sel=null;render()">2. tavla: ${esc(seatName('A2'))} – ${esc(seatName('B2'))}</button></div>
     ${renderBoard(UI.boardTab, viewSide, UI.boardTab===myBoard?legal:[], UI.boardTab===myBoard&&p&&!p.done)}
-    ${renderScoreboard()}
-    <div class="card"><h2>Akış</h2><div class="log">${S.log.map(l=>`<div>${esc(l)}</div>`).join('')}</div></div>
+    ${renderResign(mySeat)}
+    ${renderScoreboard(true)}
     <div class="conn" id="conn"></div>
     ${isHost?`<p style="text-align:center"><button class="secondary small" onclick="if(confirm('Oyunu bırakıp lobiye dönülsün mü?'))act({type:'toLobby'})">Lobiye dön</button></p>`:''}`;
 }
@@ -645,7 +703,7 @@ function renderPresence(mySeat){
     warn=`<div class="tiny" style="color:var(--danger);margin-top:4px">⚠︎ ${esc(names)} çevrimdışı. Aynı linkten tekrar girince yerine döner.</div>`;
     if(!mySeat) warn+=`<div class="actions" style="margin-top:6px">${off.map(s=>`<button class="secondary small" onclick="act({type:'takeover',seat:'${s}'})">${esc(S.seats[s]&&S.players[S.seats[s]]?S.players[S.seats[s]].name:s[1]+'. tavla')} yerine geç</button>`).join('')}</div>`;
   }
-  return `<div style="text-align:center;margin:6px 0 2px;line-height:2">${chips}${warn}</div>`;
+  return `<div style="text-align:center;margin:2px 0;line-height:1.9">${chips}${warn}</div>`;
 }
 function renderResult(isHost){
   const r1=S.boards[1].result, r2=S.boards[2].result; const line=(bi,r)=>`${bi}. tavla: <b>${esc(seatName(r.winner+bi))}</b> ${r.mars?'<b>mars</b> etti (2 puan)':'kazandı (1 puan)'}`;
@@ -655,8 +713,24 @@ function renderResult(isHost){
   }
   return `<div class="card result"><h1>${S.score.A===S.score.B?'Skor eşit':(S.score.A>S.score.B?TEAM_NAME.A:TEAM_NAME.B)+' önde'}: ${S.score.A}-${S.score.B}</h1><p>${line(1,r1)}<br>${line(2,r2)}</p>${isHost?`<div class="actions"><button onclick="act({type:'start'})">Sonraki oyun</button><button class="secondary" onclick="if(confirm('Skor sıfırlansın mı?'))act({type:'resetScore'})">Skoru sıfırla</button></div>`:`<p class="muted">Ev sahibi sonraki oyunu başlatabilir.</p>`}</div>`;
 }
-function renderScoreboard(){
+function renderResign(mySeat){
+  if(S.phase!=='playing'||!mySeat) return '';
+  const bi=BOARD_OF(mySeat); const b=S.boards[bi]; if(b.result||UI.boardTab!==bi) return '';
+  const side=TEAM_OF(mySeat); const opp=side==='A'?'B':'A';
+  if(b.resign){
+    if(b.resign.by===side) return `<div class="card" style="padding:8px 12px;text-align:center"><span class="tiny muted">Pes isteğiniz ${esc(seatName(opp+bi))}'a iletildi, cevabı bekleniyor…</span></div>`;
+    return `<div class="card" style="border-color:var(--accent);padding:10px 12px"><div style="font-weight:700;margin-bottom:6px">${esc(seatName(opp+bi))} pes etmek istiyor.</div><div class="tiny muted" style="margin-bottom:8px">Hiç taş çıkarmadı: kabul ederseniz normal galibiyet (1 puan) alırsınız; reddederseniz oyun sürer, mars (2 puan) için oynayabilirsiniz.</div><div class="actions" style="margin:0"><button class="small" onclick="act({type:'resignAnswer',accept:true})">Kabul et (1 puan)</button><button class="secondary small" onclick="act({type:'resignAnswer',accept:false})">Reddet, marsa oyna</button></div></div>`;
+  }
+  const marsRisk=b.off[side]===0;
+  const auto=ls.get('utavla:auto',true);
+  return `<p style="text-align:center;margin:4px 0;display:flex;gap:8px;justify-content:center;align-items:center"><label class="tiny muted" style="display:flex;align-items:center;gap:6px;cursor:pointer"><input type="checkbox" ${auto?'checked':''} onchange="setAuto(this.checked)" style="width:18px;height:18px;margin:0">Otomatik topla</label><button class="secondary small" onclick="if(confirm('${marsRisk?'Hiç taş çıkarmadınız; pes ederseniz rakibe sorulur, isterse mars için devam eder.':'Pes ederseniz rakip 1 puan alır.'} Pes ediyor musunuz?'))act({type:'resign'})">🏳 Pes et</button></p>`;
+}
+function setAuto(v){ ls.set('utavla:auto',!!v); act({type:'pref',auto:!!v}); toast(v?'Otomatik toplama açık: tek seçenek varsa kendiliğinden oynar.':'Otomatik toplama kapalı.'); }
+function renderScoreboard(mini){
   const hist=S.history||[]; const target=S.target||10;
+  if(mini){
+    return `<div class="card sbmini"><div class="sbrow"><div class="sbt"><div class="sbname a">1. Takım</div><div class="sbwho">${esc(seatName('A1'))} & ${esc(seatName('A2'))}</div></div><div class="sbbig"><span class="a">${S.score.A}</span><span class="muted">:</span><span class="b">${S.score.B}</span></div><div class="sbt" style="text-align:right"><div class="sbname b">2. Takım</div><div class="sbwho">${esc(seatName('B1'))} & ${esc(seatName('B2'))}</div></div></div><div class="tiny muted" style="text-align:center;margin-top:4px">${target} puana kadar${hist.length?' • Oyunlar: '+hist.map(h=>`<span class="a">${h.A}</span>-<span class="b">${h.B}</span>`).join(', '):' • galibiyet 1, mars 2'}</div></div>`;
+  }
   const rows=hist.map(h=>`<tr><td>${h.n}. oyun</td><td class="a" style="text-align:center">${h.A}</td><td class="b" style="text-align:center">${h.B}</td></tr>`).join('');
   const pct=t=>Math.min(100,Math.round(100*S.score[t]/target));
   return `<div class="card"><h2>Genel skor tablosu <span class="muted" style="text-transform:none;letter-spacing:0">• ${target} puana kadar</span></h2>
@@ -669,7 +743,7 @@ function renderScoreboard(){
    Görüntü: izleyen tarafın evi sağ altta. relPos 1..6 sağ alt, 7..12 sol alt, 13..18 sol üst, 19..24 sağ üst. Bar ortada, dışarı tepsisi sağda. */
 function renderBoard(bi, side, legal, interactive){
   const b=S.boards[bi];
-  const W=640,H=460, pad=14, barW=46, trayW=52, ptW=(W-2*pad-barW-trayW)/12, ptH=180, r=Math.min(ptW*0.46,22);
+  const W=640,H=620, pad=12, barW=44, trayW=46, ptW=(W-2*pad-barW-trayW)/12, ptH=250, r=Math.min(ptW*0.47,22);
   const opp = side==='A'?'B':'A';
   const xOfRel = rp => {
     const i = rp<=6 ? 6-rp : rp<=12 ? 12-rp : rp<=18 ? rp-13 : rp-19;
@@ -690,7 +764,7 @@ function renderBoard(bi, side, legal, interactive){
     <radialGradient id="cA${bi}" cx=".38" cy=".32" r=".75"><stop offset="0" stop-color="#fffdf6"/><stop offset=".6" stop-color="#ece1c8"/><stop offset="1" stop-color="#bfae8c"/></radialGradient>
     <radialGradient id="cB${bi}" cx=".38" cy=".32" r=".75"><stop offset="0" stop-color="#6b4d38"/><stop offset=".55" stop-color="#3a2719"/><stop offset="1" stop-color="#160d08"/></radialGradient>
     <filter id="sh${bi}" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="1.5" stdDeviation="1.4" flood-color="#000" flood-opacity=".45"/></filter>
-    <filter id="in${bi}"><feGaussianBlur stdDeviation="3"/></filter>
+    <linearGradient id="dgr${bi}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fffdf7"/><stop offset="1" stop-color="#e2d8c4"/></linearGradient>
   </defs>`;
   // çerçeve + zemin
   g+=`<rect x="0" y="0" width="${W}" height="${H}" rx="14" fill="url(#wood${bi})"/>`;
@@ -707,7 +781,9 @@ function renderBoard(bi, side, legal, interactive){
     const isDest = dests.has(String(ap));
     const isSel = selKey!=null && String(selKey)===String(ap);
     g+=`<polygon class="pt ${isSel?'sel':''} ${isDest?'dest':''}" points="${x-ptW/2+1},${y0} ${x+ptW/2-1},${y0} ${x},${y1}" fill="url(#${dark?'ptD':'ptL'}${bi})" ${tap(ap)}/>`;
-    if(isDest) g+=`<circle cx="${x}" cy="${top? pad+ptH-r-6 : H-pad-ptH+r+6}" r="${r*0.55}" fill="none" stroke="#7cc4a0" stroke-width="3" opacity=".95" style="pointer-events:none"/>`;
+    if(isDest){ const dd=dests.get(String(ap)); const cy=top? pad+ptH-r-6 : H-pad-ptH+r+6;
+      if(dd.seq.length===1) g+=`<circle cx="${x}" cy="${cy}" r="${r*0.55}" fill="none" stroke="#7cc4a0" stroke-width="3" opacity=".95" style="pointer-events:none"/>`;
+      else g+=`<circle cx="${x}" cy="${cy}" r="${r*0.7}" fill="#7cc4a0" opacity=".95" style="pointer-events:none"/><text x="${x}" y="${cy+5}" text-anchor="middle" font-size="14" font-weight="800" fill="#1c1a17" style="pointer-events:none">${dd.total}</text>`; }
     const v=b.pts[ap]; const n=Math.abs(v); const owner=v>0?'A':v<0?'B':null;
     const show=Math.min(n,5);
     for(let k=0;k<show;k++){
@@ -734,12 +810,26 @@ function renderBoard(bi, side, legal, interactive){
   for(let k=0;k<b.off[side];k++) slab(side,k,true);
   for(let k=0;k<b.off[opp];k++) slab(opp,k,false);
   g+=`<text x="${tx+tw/2}" y="${H/2+1}" text-anchor="middle" font-size="9" font-weight="700" fill="#f3ede4" opacity=".7" style="pointer-events:none">DIŞARI</text>`;
+  if(offDest){ const dd=dests.get('off'); if(dd.seq.length>1) g+=`<circle cx="${tx+tw/2}" cy="${H*0.75}" r="14" fill="#7cc4a0" style="pointer-events:none"/><text x="${tx+tw/2}" y="${H*0.75+5}" text-anchor="middle" font-size="14" font-weight="800" fill="#1c1a17" style="pointer-events:none">${dd.total}</text>`; }
+  // zarlar (tahtanın ortasındaki boş şeritte)
+  const tt=S.turn;
+  if(tt&&tt.dice){
+    const dbl=tt.dice[0]===tt.dice[1]; const shown=dbl?[tt.dice[0],tt.dice[0],tt.dice[0],tt.dice[0]]:tt.dice;
+    const mySeat=seatOf(ME.pid); const pp=mySeat&&TEAM_OF(mySeat)===tt.team?tt.players[mySeat]:null;
+    const rollKey=tt.dice.join(',')+'|'+S.games+'|'+S.rollN; const anim=UI.lastDice!==rollKey; UI.lastDice=rollKey;
+    const size=Math.min(52,(H-2*ptH)-14), gap=8, total=shown.length*size+(shown.length-1)*gap;
+    const cx0=(tt.team===side)? pad+6*ptW+barW+3*ptW : pad+3*ptW; // oynayan takım kendi tarafında görür
+    const x0=cx0-total/2, y0=H/2-size/2; const k=size/100;
+    const P={1:[[50,50]],2:[[28,28],[72,72]],3:[[28,28],[50,50],[72,72]],4:[[28,28],[72,28],[28,72],[72,72]],5:[[28,28],[72,28],[50,50],[28,72],[72,72]],6:[[28,28],[72,28],[28,50],[72,50],[28,72],[72,72]]};
+    shown.forEach((d,i)=>{ let used=false; if(pp){ used=dbl? i>=pp.diceLeft.length : !pp.diceLeft.includes(d); }
+      g+=`<g transform="translate(${x0+i*(size+gap)},${y0})"><g class="dg ${anim?'roll':''}" style="opacity:${used?.3:1}"><rect x="0" y="0" width="${size}" height="${size}" rx="${size*0.2}" fill="url(#dgr${bi})" stroke="#b9ad95" stroke-width="1.5" filter="url(#sh${bi})"/>${P[d].map(([px,py])=>`<circle cx="${px*k}" cy="${py*k}" r="${9*k}" fill="#1c1a17"/>`).join('')}</g></g>`; });
+  }
   // isim etiketleri
   g+=`<text x="${pad+6}" y="${H/2-4}" font-size="11" font-weight="700" fill="#3d2414" opacity=".85" style="pointer-events:none">${esc(seatName(opp+bi))} ${opp==='A'?'●':'○'}</text>`;
   g+=`<text x="${pad+6}" y="${H/2+13}" font-size="11" font-weight="700" fill="#3d2414" opacity=".85" style="pointer-events:none">${esc(seatName(side+bi))} ${side==='A'?'●':'○'} ▶ ev sağ alt</text>`;
   const head=`<div class="boardhead"><span><span class="badge A">${TEAM_NAME.A}</span> <b>${esc(seatName('A'+bi))}</b> <span class="muted tiny">● açık</span></span><span><span class="muted tiny">○ koyu</span> <b>${esc(seatName('B'+bi))}</b> <span class="badge B">${TEAM_NAME.B}</span></span></div>`;
   const res=b.result?`<div class="turnmsg">${esc(seatName(b.result.winner+bi))} bu tavlayı ${b.result.mars?'MARS ile ':''}kazandı</div>`:'';
-  return head+`<div class="boardwrap"><svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" onclick="svgTap(event)">${g}</svg></div>`+res+`<p class="muted tiny" style="text-align:center;min-height:16px">${interactive?(selKey!=null?'Şimdi hedefe dokunun (tekrar dokunursanız seçim kalkar).':'Yeşil halkalı taşlardan birine dokunun.'):''}</p>`;
+  return head+`<div class="boardwrap"><svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" onclick="svgTap(event)">${g}</svg></div>`+res+(interactive?`<p class="muted tiny" style="text-align:center;margin:3px 0">${selKey!=null?'Hedefe dokunun. Rakamlı yeşil nokta: iki zarı aynı taşla oynar.':'Yeşil halkalı taşa dokunun.'}</p>`:'');
 }
 function svgTap(ev){
   const el=ev.target.closest?ev.target.closest('[data-k]'):null; if(!el) return;
@@ -750,10 +840,26 @@ function dieSVG(n,cls){
   return `<svg class="die ${cls||''}" viewBox="0 0 100 100"><defs><linearGradient id="dg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fffdf7"/><stop offset="1" stop-color="#e2d8c4"/></linearGradient></defs><rect x="4" y="4" width="92" height="92" rx="20" fill="url(#dg)" stroke="#b9ad95" stroke-width="2"/>${P.map(([x,y])=>`<circle cx="${x}" cy="${y}" r="9" fill="#1c1a17"/><circle cx="${x-2.5}" cy="${y-2.5}" r="3" fill="#4a4540" opacity=".6"/>`).join('')}</svg>`;
 }
 // seçili kaynaktan gidilebilecek hedefler → Map(dest → die)
+// seçili taşın gidebileceği hedefler: tek zarla ve aynı taşla art arda birkaç zarla (örn. 6-4 → 10)
 function legalDests(b,side,from,legal){
-  const m=new Map();
-  for(const mv of legal){ if(String(mv.from)!==String(from)) continue; const to=target(b,side,mv.from,mv.die); if(to==null) continue; const k=String(to);
-    if(!m.has(k)) m.set(k,mv.die); else { const rp = from==='bar'?25:relPos(side,from); const prefer = (to==='off') ? (mv.die===rp ? mv.die : Math.min(m.get(k),mv.die)) : mv.die; m.set(k,prefer); } }
+  const m=new Map(); // dest -> {seq:[{from,die}], total}
+  const rpOf = f => f==='bar'?25:relPos(side,f);
+  const consider=(k,seq,total)=>{ const cur=m.get(k); if(!cur||seq.length<cur.seq.length||(seq.length===cur.seq.length&&k==='off'&&total<cur.total)) m.set(k,{seq,total}); };
+  const dfs=(bb,dice,cur,seq,total,depth)=>{
+    if(depth>=4) return;
+    const lf=legalFirstMoves(bb,side,dice).filter(mv=>String(mv.from)===String(cur));
+    for(const mv of lf){
+      const to=target(bb,side,mv.from,mv.die); if(to==null) continue;
+      const nb=applyMove(bb,side,mv.from,mv.die); const rem=dice.slice(); rem.splice(rem.indexOf(mv.die),1);
+      const nseq=[...seq,{from:mv.from,die:mv.die}]; const ntot=total+mv.die;
+      consider(String(to),nseq,ntot);
+      if(to!=='off'&&rem.length) dfs(nb,rem,to,nseq,ntot,depth+1);
+    }
+  };
+  const p=S.turn&&S.turn.players[seatOf(ME.pid)]; const dice=p?p.diceLeft:[];
+  dfs(b,dice,from,[],0,0);
+  // tek zarlı hedeflerde çıkış için tam zar tercih edilir
+  for(const [k,v] of m){ if(v.seq.length===1&&k==='off'){ const rp=rpOf(from); const exact=legal.find(mv=>String(mv.from)===String(from)&&mv.die===rp&&target(b,side,mv.from,mv.die)==='off'); if(exact) m.set(k,{seq:[{from,die:rp}],total:rp}); } }
   return m;
 }
 function tapPoint(key){
@@ -765,7 +871,7 @@ function tapPoint(key){
   const legal=legalFirstMoves(b,side,p.diceLeft);
   if(UI.sel!=null){
     const dests=legalDests(b,side,UI.sel,legal);
-    if(dests.has(String(key))){ const d=dests.get(String(key)); const from=UI.sel; UI.sel=null; act({type:'move',from,die:d}); return; }
+    if(dests.has(String(key))){ const d=dests.get(String(key)); UI.sel=null; if(d.seq.length===1) act({type:'move',from:d.seq[0].from,die:d.seq[0].die}); else act({type:'moves',seq:d.seq}); return; }
     if(String(key)===String(UI.sel)){ UI.sel=null; render(); return; }
   }
   if(legal.some(m=>String(m.from)===String(key))){ UI.sel=key; render(); }
