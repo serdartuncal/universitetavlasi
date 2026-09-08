@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0046)file:///C:/Users/serda/Downloads/index_12.html -->
+<!-- saved from url=(0046)file:///C:/Users/serda/Downloads/index_15.html -->
 <html lang="tr"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
@@ -106,7 +106,7 @@ svg{display:block;width:100%;height:auto;touch-action:manipulation}
 <div class="wrap" id="app">
     <h1>Oda 38KXJ2</h1>
     <div class="card">
-      <div class="link">file:///C:/Users/serda/Downloads/index_12.html?oda=38KXJ2</div>
+      <div class="link">file:///C:/Users/serda/Downloads/index_15.html?oda=38KXJ2</div>
       <div class="actions"><button onclick="shareLink()">Linki paylaş</button></div>
       <p class="muted tiny">Arkadaşlarınız bu linki telefonlarında açıp adlarını yazsın; sonra bir koltuğa dokunsun.</p>
     </div>
@@ -307,10 +307,15 @@ function rollFor(){
     turnSnap[s]={board:cloneBoard(b),dice:full.slice()};
     if(b.result){ p.done=true; p.diceLeft=[]; continue; }
     p.diceLeft=full.slice();
-    if(!legalFirstMoves(b,S.turn.team,p.diceLeft).length){ p.noMove=true; p.done=true; p.diceLeft=[]; pushLog(`${seatName(s)}: oynanacak hamle yok.`); }
+    if(!legalFirstMoves(b,S.turn.team,p.diceLeft).length){ p.noMove=true; p.done=true; p.diceLeft=[]; }
   }
-  for(const s of teamSeats(S.turn.team)) autoPlay(s);
-  checkTurnEnd();
+  const thisTurn=S.turn, team=S.turn.team;
+  // giremeyen/oynayamayan taraf: pas uyarısı (autoPlay tur bitirmeden ÖNCE hesapla)
+  const danced=teamSeats(team).filter(s=>thisTurn.players[s].noMove && seatActive(s));
+  if(danced.length){ const who=danced.map(seatName).join(' ve '); const barred=danced.some(s=>S.boards[BOARD_OF(s)].bar[team]>0);
+    S.lastPass={team, dice:d.slice(), who, barred}; pushLog(`${who} ${d[0]}-${d[1]} attı ama ${barred?'giremedi':'oynayacak hamlesi yok'} — pas.`); }
+  for(const s of teamSeats(team)) autoPlay(s);
+  if(S.turn===thisTurn) checkTurnEnd();
 }
 function doMove(seat,from,dieVal){
   const p=S.turn.players[seat]; const team=TEAM_OF(seat); const bi=BOARD_OF(seat);
@@ -320,7 +325,7 @@ function doMove(seat,from,dieVal){
   if(!legal.some(m=>String(m.from)===String(from)&&m.die===dieVal)) return 'Geçersiz hamle.';
   const nb=applyMove(S.boards[bi],team,from==='bar'?'bar':+from,dieVal);
   if(!nb) return 'Geçersiz hamle.';
-  S.boards[bi]=nb; p.diceLeft.splice(p.diceLeft.indexOf(dieVal),1); p.moves++;
+  S.boards[bi]=nb; p.diceLeft.splice(p.diceLeft.indexOf(dieVal),1); p.moves++; S.lastPass=null;
   const res=boardResult(nb);
   if(res){ nb.result=res; p.done=true; p.diceLeft=[]; pushLog(`${bi}. tavla bitti: ${seatName(seat)} ${res.mars?'MARS ile ':''}kazandı!`); }
   checkTurnEnd();
@@ -611,6 +616,9 @@ function roomLink(code){ const u=new URL(location.href); u.search=''; u.searchPa
 
 function render(){
   if(NET.yielded) return;
+  try{ _render(); }catch(e){ console.warn('render hata',e); }
+}
+function _render(){
   app.className='wrap'+(S&&ME&&S.phase!=='lobby'?' game':'');
   if(!ME){ renderWelcome(); return; }
   if(!S){ app.innerHTML=`<h1>Üniversite Tavlası</h1><div class="card"><p>Oda: <b>${esc(NET.code||'')}</b></p><p class="muted">${NET.hostOnline===false?'Ev sahibi şu an çevrimdışı; sayfayı açınca oyun gelecek.':'Odaya bağlanılıyor… Ev sahibinin sayfayı açık tuttuğundan emin olun.'}</p><div class="conn" id="conn">${esc(NET.status)}</div><br><button class="secondary" onclick="leaveRoom()">Odadan çık</button></div>`; return; }
@@ -701,6 +709,7 @@ function renderGame(){
     </div></div>
     ${renderPresence(mySeat)}
     ${hostBanner()}
+    ${S.lastPass?`<div class="turnmsg" style="background:#3a2a22;border-color:var(--danger);color:#f0b8a8">⚠︎ ${esc(S.lastPass.who)} ${S.lastPass.dice[0]}-${S.lastPass.dice[1]} attı, ${S.lastPass.barred?'kırık taşını sokamadı':'hamlesi yok'} — pas geçti.</div>`:''}
     <div class="turnmsg ${mine?'me':''}">${esc(msg)}</div>
     ${diceHtml}
     ${p&&(canUndo||canConfirm)?`<div class="actions"><button class="secondary" onclick="act({type:'undo'})" ${canUndo?'':'disabled'}>↶ Geri al</button><button onclick="act({type:'finish'})" ${canConfirm?'':'disabled'}>✓ Onayla</button></div>`:''}
@@ -824,8 +833,7 @@ function renderBoard(bi, side, legal, interactive){
     const show=Math.min(n,5);
     for(let k=0;k<show;k++){
       const cy = top ? pad+r+3 + k*(2*r-3) : H-pad-r-3 - k*(2*r-3);
-      g+=`<circle class="chk" filter="url(#sh${bi})" cx="${x}" cy="${cy}" r="${r}" fill="url(#c${owner}${bi})" stroke="${owner==='A'?'#9d8c6a':'#0c0704'}" stroke-width="1" ${tap(ap)}/>`;
-      g+=`<circle cx="${x}" cy="${cy}" r="${r*0.62}" fill="none" stroke="${owner==='A'?'#c9b995':'#4a3524'}" stroke-width="1" opacity=".7" style="pointer-events:none"/>`;
+      g+=`<circle class="chk" cx="${x}" cy="${cy}" r="${r}" fill="url(#c${owner}${bi})" stroke="${owner==='A'?'#8a7a5c':'#0c0704'}" stroke-width="1.2" ${tap(ap)}/>`;
     }
     if(n>5){ const cy= top ? pad+r+3 + 4*(2*r-3) : H-pad-r-3 - 4*(2*r-3); g+=`<text class="cnt cnt${owner}" x="${x}" y="${cy+5}" text-anchor="middle">${n}</text>`; }
     if(legalFrom.has(String(ap)) && selKey==null){ const cy = top ? pad+r+3 + (show-1)*(2*r-3) : H-pad-r-3 - (show-1)*(2*r-3); g+=`<circle cx="${x}" cy="${cy}" r="${r+3}" fill="none" stroke="#7cc4a0" stroke-width="2.5" opacity=".9" style="pointer-events:none"/>`; }
@@ -833,7 +841,7 @@ function renderBoard(bi, side, legal, interactive){
   // bar taşları
   const bx=pad+6*ptW+barW/2;
   const drawBar=(who,topSide)=>{ const n=b.bar[who]; if(!n) return; const cy= topSide? H/2-r-8 : H/2+r+8; const sel=String(selKey)==='bar'&&who===side;
-    g+=`<circle class="chk ${sel?'sel':''}" filter="url(#sh${bi})" cx="${bx}" cy="${cy}" r="${r}" fill="url(#c${who}${bi})" stroke="${who==='A'?'#9d8c6a':'#0c0704'}" ${who===side?tap('bar'):''}/>`;
+    g+=`<circle class="chk ${sel?'sel':''}" cx="${bx}" cy="${cy}" r="${r}" fill="url(#c${who}${bi})" stroke="${who==='A'?'#8a7a5c':'#0c0704'}" stroke-width="1.2" ${who===side?tap('bar'):''}/>`;
     if(n>1) g+=`<text class="cnt cnt${who}" x="${bx}" y="${cy+5}" text-anchor="middle">${n}</text>`;
     if(legalFrom.has('bar')&&selKey==null&&who===side) g+=`<circle cx="${bx}" cy="${cy}" r="${r+3}" fill="none" stroke="#7cc4a0" stroke-width="2.5" style="pointer-events:none"/>`; };
   drawBar(side,false); drawBar(opp,true);
