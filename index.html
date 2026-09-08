@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0046)file:///C:/Users/serda/Downloads/index_10.html -->
+<!-- saved from url=(0046)file:///C:/Users/serda/Downloads/index_11.html -->
 <html lang="tr"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
@@ -106,16 +106,16 @@ svg{display:block;width:100%;height:auto;touch-action:manipulation}
 <div class="wrap" id="app">
     <h1>Oda 38KXJ2</h1>
     <div class="card">
-      <div class="link">file:///C:/Users/serda/Downloads/index_10.html?oda=38KXJ2</div>
+      <div class="link">file:///C:/Users/serda/Downloads/index_11.html?oda=38KXJ2</div>
       <div class="actions"><button onclick="shareLink()">Linki paylaş</button></div>
       <p class="muted tiny">Arkadaşlarınız bu linki telefonlarında açıp adlarını yazsın; sonra bir koltuğa dokunsun.</p>
     </div>
     <div class="card">
       <h2>Koltuklar</h2>
-      <div class="seats"><div class="seat tA " onclick="sit(&#39;A1&#39;)"><div class="lbl">1. Takım • 1. tavla</div><div class="who empty">boş — dokun</div></div><div class="seat tB " onclick="sit(&#39;B1&#39;)"><div class="lbl">2. Takım • 1. tavla</div><div class="who empty">boş — dokun</div></div><div class="seat tA " onclick="sit(&#39;A2&#39;)"><div class="lbl">1. Takım • 2. tavla</div><div class="who empty">boş — dokun</div></div><div class="seat tB " onclick="sit(&#39;B2&#39;)"><div class="lbl">2. Takım • 2. tavla</div><div class="who empty">boş — dokun</div></div></div>
-      <p class="muted tiny" style="margin-top:8px">1. tavlada <b>—</b> ile <b>—</b>, 2. tavlada <b>—</b> ile <b>—</b> karşılaşır. Aynı takımın üyeleri aynı zarı oynar.</p>
-      <p class="muted tiny">Bekleyenler: <span class="badge"><span class="dot on"></span>serdar</span></p>
+      <div class="seats"><div class="seat tA mine" onclick="sit(&#39;A1&#39;)"><div class="lbl">1. Takım • 1. tavla</div><div class="who "><span class="dot on"></span>serdar (siz)</div></div><div class="seat tB " onclick="sit(&#39;B1&#39;)"><div class="lbl">2. Takım • 1. tavla</div><div class="who empty">boş — dokun</div></div><div class="seat tA " onclick="sit(&#39;A2&#39;)"><div class="lbl">1. Takım • 2. tavla</div><div class="who empty">boş — dokun</div></div><div class="seat tB " onclick="sit(&#39;B2&#39;)"><div class="lbl">2. Takım • 2. tavla</div><div class="who empty">boş — dokun</div></div></div>
+      <p class="muted tiny" style="margin-top:8px">1. tavlada <b>serdar</b> ile <b>—</b>, 2. tavlada <b>—</b> ile <b>—</b> karşılaşır. Aynı takımın üyeleri aynı zarı oynar.</p>
       
+      <button class="secondary small" onclick="act({type:&#39;stand&#39;})">Koltuktan kalk</button>
     </div>
     
     
@@ -432,6 +432,10 @@ function handleAction(pid,a){
       if(b.resignDenied===S.rollN){ reply(pid,'Rakip bu elde reddetti; bir sonraki elde tekrar deneyebilirsiniz.'); return; }
       b.resign={by:side,t:Date.now()}; pushLog(`${seatName(seat)} pes etmek istiyor (mars ihtimali var, rakibe soruluyor).`);
       break; }
+    case 'resignMars': {
+      if(S.phase!=='playing'||!seat) return; const bi=BOARD_OF(seat); const b=S.boards[bi]; if(b.result) return;
+      const side=TEAM_OF(seat); const opp=side==='A'?'B':'A';
+      setBoardResult(bi,{winner:opp,mars:b.off[side]===0},`${seatName(seat)} ${b.off[side]===0?'marsı kabul etti':'pes etti'}`); break; }
     case 'resignAnswer': {
       if(S.phase!=='playing'||!seat) return; const bi=BOARD_OF(seat); const b=S.boards[bi]; if(b.result||!b.resign) return;
       const side=TEAM_OF(seat); if(b.resign.by===side) return; // sadece rakip cevaplar
@@ -687,7 +691,7 @@ function renderGame(){
     ${renderResign(mySeat)}
     ${renderScoreboard(true)}
     <div class="conn" id="conn"></div>
-    ${isHost?`<p style="text-align:center"><button class="secondary small" onclick="if(confirm('Oyunu bırakıp lobiye dönülsün mü?'))act({type:'toLobby'})">Lobiye dön</button></p>`:''}`;
+    <p style="text-align:center;display:flex;gap:8px;justify-content:center">${isHost?`<button class="secondary small" onclick="if(confirm('Oyunu bırakıp lobiye dönülsün mü? (Herkes lobiye döner, skor kalır)'))act({type:'toLobby'})">Lobiye dön</button>`:''}<button class="secondary small" onclick="if(confirm('Odadan çıkmak istiyor musunuz? Aynı linkle geri dönebilirsiniz.'))leaveRoom()">Odadan çık</button></p>`;
 }
 function hostBanner(){
   if(NET.role!=='guest'||NET.hostOnline!==false) return '';
@@ -723,8 +727,13 @@ function renderResign(mySeat){
   }
   const marsRisk=b.off[side]===0;
   const auto=ls.get('utavla:auto',true);
-  return `<p style="text-align:center;margin:4px 0;display:flex;gap:8px;justify-content:center;align-items:center"><label class="tiny muted" style="display:flex;align-items:center;gap:6px;cursor:pointer"><input type="checkbox" ${auto?'checked':''} onchange="setAuto(this.checked)" style="width:18px;height:18px;margin:0">Otomatik topla</label><button class="secondary small" onclick="if(confirm('${marsRisk?'Hiç taş çıkarmadınız; pes ederseniz rakibe sorulur, isterse mars için devam eder.':'Pes ederseniz rakip 1 puan alır.'} Pes ediyor musunuz?'))act({type:'resign'})">🏳 Pes et</button></p>`;
+  return `<div style="text-align:center;margin:4px 0;display:flex;gap:8px;justify-content:center;align-items:center;flex-wrap:wrap"><label class="tiny muted" style="display:flex;align-items:center;gap:6px;cursor:pointer"><input type="checkbox" ${auto?'checked':''} onchange="setAuto(this.checked)" style="width:18px;height:18px;margin:0">Otomatik topla</label><button class="secondary small" onclick="askResign()">🏳 Pes et${marsRisk?' (1 puan, rakibe sorulur)':' (1 puan)'}</button>${marsRisk?`<button class="secondary small" style="border-color:var(--danger);color:var(--danger)" onclick="askMars()">Mars kabul et (2 puan, hemen biter)</button>`:''}</div>`;
 }
+function askResign(){ const seat=seatOf(ME.pid); if(!seat) return; const bi=BOARD_OF(seat); const b=S.boards[bi]; const side=TEAM_OF(seat); const opp=seatName((side==='A'?'B':'A')+bi);
+  const msg = b.off[side]===0 ? `Hiç taş çıkarmadınız. Pes ederseniz ${opp}'a sorulur: 1 puanı kabul eder ya da mars için oynamaya devam eder. Pes ediyor musunuz?` : `Pes ederseniz ${opp} 1 puan alır. Pes ediyor musunuz?`;
+  if(confirm(msg)) act({type:'resign'}); }
+function askMars(){ const seat=seatOf(ME.pid); if(!seat) return; const bi=BOARD_OF(seat); const side=TEAM_OF(seat); const opp=seatName((side==='A'?'B':'A')+bi);
+  if(confirm(`MARS kabul: ${opp} hemen 2 puan alır ve bu tavla biter. Onaylıyor musunuz?`)) act({type:'resignMars'}); }
 function setAuto(v){ ls.set('utavla:auto',!!v); act({type:'pref',auto:!!v}); toast(v?'Otomatik toplama açık: tek seçenek varsa kendiliğinden oynar.':'Otomatik toplama kapalı.'); }
 function renderScoreboard(mini){
   const hist=S.history||[]; const target=S.target||10;
@@ -824,9 +833,6 @@ function renderBoard(bi, side, legal, interactive){
     shown.forEach((d,i)=>{ let used=false; if(pp){ used=dbl? i>=pp.diceLeft.length : !pp.diceLeft.includes(d); }
       g+=`<g transform="translate(${x0+i*(size+gap)},${y0})"><g class="dg ${anim?'roll':''}" style="opacity:${used?.3:1}"><rect x="0" y="0" width="${size}" height="${size}" rx="${size*0.2}" fill="url(#dgr${bi})" stroke="#b9ad95" stroke-width="1.5" filter="url(#sh${bi})"/>${P[d].map(([px,py])=>`<circle cx="${px*k}" cy="${py*k}" r="${9*k}" fill="#1c1a17"/>`).join('')}</g></g>`; });
   }
-  // isim etiketleri
-  g+=`<text x="${pad+6}" y="${H/2-4}" font-size="11" font-weight="700" fill="#3d2414" opacity=".85" style="pointer-events:none">${esc(seatName(opp+bi))} ${opp==='A'?'●':'○'}</text>`;
-  g+=`<text x="${pad+6}" y="${H/2+13}" font-size="11" font-weight="700" fill="#3d2414" opacity=".85" style="pointer-events:none">${esc(seatName(side+bi))} ${side==='A'?'●':'○'} ▶ ev sağ alt</text>`;
   const head=`<div class="boardhead"><span><span class="badge A">${TEAM_NAME.A}</span> <b>${esc(seatName('A'+bi))}</b> <span class="muted tiny">● açık</span></span><span><span class="muted tiny">○ koyu</span> <b>${esc(seatName('B'+bi))}</b> <span class="badge B">${TEAM_NAME.B}</span></span></div>`;
   const res=b.result?`<div class="turnmsg">${esc(seatName(b.result.winner+bi))} bu tavlayı ${b.result.mars?'MARS ile ':''}kazandı</div>`:'';
   return head+`<div class="boardwrap"><svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" onclick="svgTap(event)">${g}</svg></div>`+res+(interactive?`<p class="muted tiny" style="text-align:center;margin:3px 0">${selKey!=null?'Hedefe dokunun. Rakamlı yeşil nokta: iki zarı aynı taşla oynar.':'Yeşil halkalı taşa dokunun.'}</p>`:'');
@@ -862,6 +868,18 @@ function legalDests(b,side,from,legal){
   for(const [k,v] of m){ if(v.seq.length===1&&k==='off'){ const rp=rpOf(from); const exact=legal.find(mv=>String(mv.from)===String(from)&&mv.die===rp&&target(b,side,mv.from,mv.die)==='off'); if(exact) m.set(k,{seq:[{from,die:rp}],total:rp}); } }
   return m;
 }
+function whyIllegal(b,side,key,dice,legal){
+  const mine = key==='bar' ? b.bar[side]>0 : (typeof key==='number' && myCount(b,side,key)>0);
+  if(!mine) return 'Bu taş sizin değil.';
+  if(b.bar[side]>0 && key!=='bar') return 'Önce bardaki (kırık) taşınızı sokmalısınız.';
+  const raw=[...new Set(dice)].filter(d=>target(b,side,key,d)!=null);
+  if(!raw.length) return 'Bu taş bu zarla oynanamıyor (hedefler kapalı).';
+  const uniq=[...new Set(dice)];
+  const best=legal.length?Math.max(...legal.map(m=>m.len)):0;
+  if(best>=2) return 'Kural: iki zarı birden oynayabileceğiniz hamle varken bu taşla tek zar oynanamaz.';
+  if(uniq.length===2) return `Kural: tek zar oynanabiliyorsa büyük zar (${Math.max(...uniq)}) oynanmalı.`;
+  return 'Bu taş şu an oynanamaz.';
+}
 function tapPoint(key){
   const mySeat=seatOf(ME.pid); if(!mySeat){ toast('Koltuğunuz yok, izliyorsunuz.'); return; }
   const t=S.turn; if(!t||!t.dice||TEAM_OF(mySeat)!==t.team){ toast(t&&!t.dice?'Önce zar atılmalı.':'Sıra sizde değil.'); return; }
@@ -875,7 +893,7 @@ function tapPoint(key){
     if(String(key)===String(UI.sel)){ UI.sel=null; render(); return; }
   }
   if(legal.some(m=>String(m.from)===String(key))){ UI.sel=key; render(); }
-  else { const had=UI.sel!=null; UI.sel=null; render(); if(!had) toast('Bu taş şu an oynanamaz.'); }
+  else { const had=UI.sel!=null; UI.sel=null; render(); if(!had) toast(whyIllegal(b,side,key,p.diceLeft,legal)); }
 }
 
 /* ---------------- Başlangıç ---------------- */
