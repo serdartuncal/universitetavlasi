@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<!-- saved from url=(0046)file:///C:/Users/serda/Downloads/index_15.html -->
-<html lang="tr"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-
+<html lang="tr">
+<head>
+<meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#1c1a17">
 <title>Üniversite Tavlası</title>
@@ -54,6 +54,7 @@ input:focus{border-color:var(--accent)}
 .turnmsg.me{background:#3a3222;border-color:var(--accent);color:var(--accent)}
 .dice{display:flex;gap:8px;justify-content:center;align-items:center;margin:8px 0}
 svg.die{width:54px;height:54px;filter:drop-shadow(0 3px 3px rgba(0,0,0,.45));transition:opacity .2s}
+svg.die.sm{width:34px;height:34px;filter:drop-shadow(0 2px 2px rgba(0,0,0,.4))}
 svg.die.used{opacity:.25;filter:none}
 svg.die.roll{animation:tumble .7s cubic-bezier(.2,.8,.3,1)}
 g.dg{transform-box:fill-box;transform-origin:center}
@@ -103,25 +104,7 @@ svg{display:block;width:100%;height:auto;touch-action:manipulation}
 </style>
 </head>
 <body>
-<div class="wrap" id="app">
-    <h1>Oda 38KXJ2</h1>
-    <div class="card">
-      <div class="link">file:///C:/Users/serda/Downloads/index_15.html?oda=38KXJ2</div>
-      <div class="actions"><button onclick="shareLink()">Linki paylaş</button></div>
-      <p class="muted tiny">Arkadaşlarınız bu linki telefonlarında açıp adlarını yazsın; sonra bir koltuğa dokunsun.</p>
-    </div>
-    <div class="card">
-      <h2>Koltuklar</h2>
-      <div class="seats"><div class="seat tA mine" style="" onclick="sit(&#39;A1&#39;)"><div class="lbl">1. Takım • 1. tavla</div><div class="who "><span class="dot on"></span>serdar (siz)</div></div><div class="seat tB " style="" onclick="sit(&#39;B1&#39;)"><div class="lbl">2. Takım • 1. tavla</div><div class="who empty">boş — dokun</div></div><div class="seat tA " style="" onclick="sit(&#39;A2&#39;)"><div class="lbl">1. Takım • 2. tavla</div><div class="who empty">boş — dokun</div></div><div class="seat tB " style="" onclick="sit(&#39;B2&#39;)"><div class="lbl">2. Takım • 2. tavla</div><div class="who empty">boş — dokun</div></div></div>
-      <p class="muted tiny" style="margin-top:8px">1. tavlada <b>serdar</b> ile <b>—</b>, 2. tavlada <b>—</b> ile <b>—</b> karşılaşır. Aynı takımın üyeleri aynı zarı oynar. Sadece iki kişiyseniz aynı tavlanın iki koltuğuna oturun, teke tek başlar.</p>
-      
-      <button class="secondary small" onclick="act({type:&#39;stand&#39;})">Koltuktan kalk</button>
-    </div>
-    
-    
-    <button onclick="act({type:&#39;start&#39;})" disabled="">Oyunu başlat</button><p class="muted tiny" style="text-align:center">Siz ev sahibisiniz: oyun boyunca bu sayfayı açık tutun.</p><div class="card"><div class="tiny muted" style="margin-top:8px">Bir tavladaki ikili bıraktıysa diğer ikili teke tek devam edebilir (skor kalır; hedef: skor 5'in altındaysa 5, değilse 10):<div class="actions" style="margin:6px 0 0"><button class="secondary small" onclick="if(confirm(&#39;Sadece 1. tavla (serdar – —) devam etsin mi?&#39;))act({type:&#39;solo&#39;,board:1})">Sadece 1. tavla devam etsin</button><button class="secondary small" onclick="if(confirm(&#39;Sadece 2. tavla (— – —) devam etsin mi?&#39;))act({type:&#39;solo&#39;,board:2})">Sadece 2. tavla devam etsin</button></div></div></div>
-    <div class="conn" id="conn">Oda açık • 38KXJ2</div>
-    <p style="text-align:center;margin-top:14px"><button class="secondary small" onclick="leaveRoom()">Odadan çık</button></p></div>
+<div class="wrap" id="app"></div>
 <div class="toast" id="toast"></div>
 
 <script>/* MQTT.js 5 — MIT */
@@ -709,7 +692,7 @@ function renderGame(){
     </div></div>
     ${renderPresence(mySeat)}
     ${hostBanner()}
-    ${S.lastPass?`<div class="turnmsg" style="background:#3a2a22;border-color:var(--danger);color:#f0b8a8">⚠︎ ${esc(S.lastPass.who)} ${S.lastPass.dice[0]}-${S.lastPass.dice[1]} attı, ${S.lastPass.barred?'kırık taşını sokamadı':'hamlesi yok'} — pas geçti.</div>`:''}
+    ${S.lastPass?`<div class="turnmsg" style="background:#3a2a22;border-color:var(--danger);color:#f0b8a8;display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap"><span style="display:inline-flex;gap:6px">${dieSVG(S.lastPass.dice[0],'sm')}${dieSVG(S.lastPass.dice[1],'sm')}</span><span>${esc(S.lastPass.who)} ${S.lastPass.barred?'kırık taşını sokamadı':'oynayamadı'} — pas.</span></div>`:''}
     <div class="turnmsg ${mine?'me':''}">${esc(msg)}</div>
     ${diceHtml}
     ${p&&(canUndo||canConfirm)?`<div class="actions"><button class="secondary" onclick="act({type:'undo'})" ${canUndo?'':'disabled'}>↶ Geri al</button><button onclick="act({type:'finish'})" ${canConfirm?'':'disabled'}>✓ Onayla</button></div>`:''}
@@ -1012,6 +995,5 @@ function whyIllegal(b,side,key,dice,legal){
   render();
 })();
 </script>
-
-
-</body></html>
+</body>
+</html>
